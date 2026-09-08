@@ -1,0 +1,13 @@
+1. Project Planning/
+# Project planning - local only
+1. Project Planning/
+
+# TIA Portal generated/cache files
+**/IM/SearchIndex/
+**/XRef/
+
+# TIA Portal backup folders
+*.backup/
+
+# Local archive - do not track
+**/Arşiv/
