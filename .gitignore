@@ -11,3 +11,7 @@
 
 # Local archive - do not track
 **/Arşiv/
+
+#Python
+__pycache__/
+*.pyc

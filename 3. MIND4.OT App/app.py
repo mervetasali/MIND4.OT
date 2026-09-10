@@ -1,7 +1,10 @@
 import streamlit as st
 
 from web_UI.styles import load_css
-
+import web_UI.pages.main_page as mainPage
+import web_UI.pages.mes_page as mesPage
+import web_UI.pages.mind_page as mindPage
+import web_UI.pages.station1_page as st1Page
 
 st.set_page_config(
     page_title="MIND4.OT",
@@ -11,6 +14,10 @@ st.set_page_config(
 )
 
 load_css()
+
+# Current page
+if "page" not in st.session_state:
+    st.session_state.page = "main"
 
 # Hide scrollbar at main page
 st.markdown(
@@ -69,76 +76,13 @@ with st.sidebar:
 
 
 
+if st.session_state.page == "main":
+    mainPage.show_main_page()
 
-# -------------------------
-# Main Content
-# -------------------------
-st.markdown(
-    """
-    <div class="welcome">
-        <h1>Welcome to MIND4.OT</h1>
-        <p>Industrial Intelligence & Smart Manufacturing Platform</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+elif st.session_state.page == "mes":
+    mesPage.show_mes_page()
 
-
-col1, col2 = st.columns(2, gap="large")
-
-
-# -------------------------
-# MES4.OT Card
-# -------------------------
-with col1:
-
-    left_space, content, right_space = st.columns([1, 6, 1])
-
-    with content:
-
-        st.image(
-            "assets/images/mes4ot_logo.png",
-            use_container_width=True
-        )
-
-        st.markdown(
-            """
-            <div class="card-description">
-                Manage Production
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.button(
-            "Open MES4.OT →",
-            use_container_width=True
-        )
-
-# -------------------------
-# MIND4.OT Card
-# -------------------------
-with col2:
-
-    left_space, content, right_space = st.columns([1, 6, 1])
-
-    with content:
-
-        st.image(
-            "assets/images/mind4ot_logo.png",
-            use_container_width=True
-        )
-
-        st.markdown(
-            """
-            <div class="card-description">
-                Analyze & Optimize
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.button(
-            "Open MIND4.OT →",
-            use_container_width=True
-        )
+elif st.session_state.page == "mind":
+    mindPage.show_mind_page()
+elif st.session_state.page == "station1":
+    st1Page.show_station1_page()
