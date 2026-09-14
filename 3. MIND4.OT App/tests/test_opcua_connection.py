@@ -1,17 +1,33 @@
 from core import OPCUAClient
-import time
+from asyncua import ua
+
 
 client = OPCUAClient("station1")
 
-client.connect()
-client.create_subscription()
-client.subscribe_node("state_no")
-
-print("Subscription active. Waiting for changes...")
-
 try:
-    while True:
-        time.sleep(1)
+    client.connect()
 
-except KeyboardInterrupt:
+    client.write_node(
+        "mes_orderID",
+        "ORD-2026-0005"
+    )
+
+    client.write_node(
+        "mes_productID",
+        "CAP-2L"
+    )
+
+    client.write_node(
+        "mes_receipeID",
+        "RCP-999"
+    )
+
+    client.write_node(
+        "mes_target_quantity",
+        999,
+    )
+
+    print("OrderID write successful.")
+
+finally:
     client.disconnect()

@@ -21,7 +21,36 @@ OPCUA_SERVERS = {
             "target_quantity" : "ns=4;i=903",
             "material_act_level" : "ns=4;i=879",
             "temperature_act_level" : "ns=4;i=880",
-            "pressure_act_level" : "ns=4;i=881"
+            "pressure_act_level" : "ns=4;i=881",
+            "mes_orderID" : "ns=4;i=890",
+            "mes_productID" : "ns=4;i=891",
+            "mes_receipeID" : "ns=4;i=892",
+            "mes_target_quantity" : "ns=4;i=893"
+        },
+
+        "types" : {
+            "start_request" : "Boolean",
+            "stop_request" : "Boolean",
+            "state_no_act" : "UInt16",
+            "state_no" : "UInt16",
+            "state_description" : "String",
+            "error_code" : "UInt16",
+            "error_description" : "String",
+            "warning_code" : "UInt16",
+            "warning_description" : "String",
+            "produced_count" : "UInt16",
+            "orderID" : "String",
+            "productID" : "UInt16",
+            "serial_no" : "UInt16",
+            "receipeID" : "UInt16",
+            "target_quantity" : "UInt16",
+            "material_act_level" : "Float",
+            "temperature_act_level" : "Float",
+            "pressure_act_level" : "Float",
+            "mes_orderID" : "String",
+            "mes_productID" : "String",
+            "mes_receipeID" : "String",
+            "mes_target_quantity" : "UInt16"
         }
     }, 
     "station2": {},

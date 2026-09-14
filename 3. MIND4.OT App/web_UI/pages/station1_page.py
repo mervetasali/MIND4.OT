@@ -40,7 +40,7 @@ def show_station1_page():
 
     product_no = st.radio(
         "Select Product",
-        ["0.5 L", "1 L", "2 L"],
+        ["CAP-05L", "CAP-1L", "CAP-2L"],
         horizontal=True,
         label_visibility="collapsed"
     )
@@ -50,7 +50,7 @@ def show_station1_page():
 
     recipe_no = st.radio(
         "Select Recipe",
-        ["001", "002", "003"],
+        ["RCP-001", "RCP-002", "RCP-003"],
         horizontal=True,
         label_visibility="collapsed"
     )
@@ -94,6 +94,27 @@ def show_station1_page():
             "Send to Station 1 →",
             use_container_width=True
         ):
+            st.session_state.station1_client.write_node(
+                "mes_orderID", 
+                st.session_state.current_order["Order ID"]
+            )
+
+            st.session_state.station1_client.write_node(
+                "mes_productID", 
+                st.session_state.current_order["Product"]
+            )
+
+            st.session_state.station1_client.write_node(
+                "mes_receipeID", 
+                st.session_state.current_order["Recipe"]
+            )
+
+            st.session_state.station1_client.write_node(
+                "mes_target_quantity", 
+                st.session_state.current_order["Target"]
+            )
+
+
             st.info("Order will be sent to Station 1.")
 
 
@@ -119,6 +140,14 @@ def show_station1_page():
                 "error_code", 0
             )
 
+            warning_code = st.session_state.station1_client.latest_values.get(
+                "warning_code", 0
+            )
+
+            produced_count = st.session_state.station1_client.latest_values.get(
+                "produced_count", 0
+            )
+
             if error_code == 0 and state_no == 0:
                 status1.metric("Machine State", "IDLE")
 
@@ -128,10 +157,13 @@ def show_station1_page():
             elif error_code == 0 and state_no != 0:
                 status1.metric("Machine State", "RUNNING")
 
+            elif warning_code == 0:
+                status1.metric("Machine State", "WARNING")            
+
         else:
             status1.metric("Machine State", "---")
 
-        status2.metric("Produced", 0)
+        status2.metric("Produced", produced_count)
 
         if st.session_state.station1_orders:
             current_target = st.session_state.station1_orders[-1]["Target"]

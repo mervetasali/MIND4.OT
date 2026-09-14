@@ -1,5 +1,6 @@
 from asyncua.sync import Client
 from config import OPCUA_SERVERS
+from asyncua import ua
 
 class SubscriptionHandler:
 
@@ -36,6 +37,9 @@ class OPCUAClient:
 
         #NodeID read from the Station
         self.node = OPCUA_SERVERS[station_no]["nodes"]
+
+        #Find out the NodeID's data type from config 
+        self.types = OPCUA_SERVERS[station_no]["types"]
 
         #Create a new dict to check the received data from the Station
         self.node_map = {}
@@ -87,5 +91,24 @@ class OPCUAClient:
 
         for node_name in self.node:
             self.subscribe_node(node_name)
-                
+
+    #Write to the Server
+    def write_node(self, node_name, value):
+
+        node_id = self.node[node_name]
+        type_name = self.types[node_name]
+        variant_type = getattr(ua.VariantType, type_name)
+
+        node = self.client.get_node(node_id)
+
+        variant = ua.Variant(value, variant_type)
+
+        data_value = ua.DataValue(
+            Value=variant
+        )
+
+        node.write_attribute(
+            ua.AttributeIds.Value,
+            data_value
+        )         
 
