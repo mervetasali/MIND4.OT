@@ -1,10 +1,17 @@
 import streamlit as st
 import core.station1 as station1
+
+
 import importlib
 
 importlib.reload(station1)
 
 def show_station1_page():
+
+    if "station1_client" in st.session_state:
+        st.success("Connection to Station-1 established.")
+    else:
+        st.error("Station-1 is not available.")
 
     # -------------------------
     # Order Storage
@@ -97,28 +104,42 @@ def show_station1_page():
     # -------------------------
     st.subheader("Station Status")
 
-    status1, status2, status3, status4 = st.columns(4)
+    @st.fragment(run_every="1s")
+    def show_station_status():
 
-    status1.metric("Machine State", "IDLE")
-    status2.metric("Produced", 0)
-    if st.session_state.station1_orders:
-        current_target = st.session_state.station1_orders[-1]["Target"]
-    else:
-        current_target = "-"
+        status1, status2, status3, status4 = st.columns(4)
 
-    status3.metric("Target", current_target)
-    status4.metric("Reject", 0)
+        if "station1_client" in st.session_state:
 
-    # -------------------------
-    # Recent Orders
-    # -------------------------
-    st.subheader("Recent Orders")
+            state_no = st.session_state.station1_client.latest_values.get(
+                "state_no_act", 0
+            )
 
-    if st.session_state.station1_orders:
-        st.dataframe(
-            st.session_state.station1_orders,
-            use_container_width=True,
-            hide_index=True
-        )
-    else:
-        st.info("No production orders yet.")
+            error_code = st.session_state.station1_client.latest_values.get(
+                "error_code", 0
+            )
+
+            if error_code == 0 and state_no == 0:
+                status1.metric("Machine State", "IDLE")
+
+            elif error_code == 1 and state_no == 0:
+                status1.metric("Machine State", "ERROR")
+
+            elif error_code == 0 and state_no != 0:
+                status1.metric("Machine State", "RUNNING")
+
+        else:
+            status1.metric("Machine State", "---")
+
+        status2.metric("Produced", 0)
+
+        if st.session_state.station1_orders:
+            current_target = st.session_state.station1_orders[-1]["Target"]
+        else:
+            current_target = "-"
+
+        status3.metric("Target", current_target)
+        status4.metric("Reject", 0)
+
+
+    show_station_status()

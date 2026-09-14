@@ -1,118 +1,106 @@
 import streamlit as st
+from core import OPCUAClient
+from config import OPCUA_SERVERS
+import time
+
 
 def show_mes_page():
     # -------------------------
     # Page Title
     # -------------------------
-    st.title("MES4.OT")
+    st.title("MES4.OT - Production Line")
 
     st.markdown(
-        """
-        ### Production Lines
-        Select a production line to view stations and manage orders.
+        """        
+        Select a station to monitor and manage production.
         """
     )
 
     # -------------------------
-    # Production Lines
+    # Station Selection
     # -------------------------
-    col1, col2, col3 = st.columns(3, gap="medium")
+    col1, col2, col3 = st.columns(3, gap="large")
 
+    # Station 1
     with col1:
-        st.subheader("Product Line 1")
-        st.write("Plastic Container Production")
-
-        #st.write("ST1 — Container Production")
-        #st.write("ST2 — Filling")
-        #st.write("ST3 — Packaging")
-
-        selected_station = st.radio(
-            "Select Station",
-            [
-                "ST1 — Container Production",
-                "ST2 — Filling",
-                "ST3 — Packaging"
-            ],
-            key="product_line1_station"
-        )
-
-        if st.button(
-            "Open Product Line 1 →",
+        st.image(
+            "assets/images/station1.png",
             use_container_width=True
-        ):
-            if selected_station.startswith("ST1"):
-                st.session_state.page = "station1"
-                st.rerun()
+        )
 
-            elif selected_station.startswith("ST2"):
-                st.info("Station 2 is not available yet.")
+        st.subheader("Station 01")
+        st.write("Plastic Container Production")
+        st.caption("Siemens")
 
-            elif selected_station.startswith("ST3"):
-                st.info("Station 3 is not available yet.")
+        try:
+            if st.button(
+                        "Connect to Station 01 →",
+                        use_container_width=True
+                    ):
+            
+                        if "station1_client" not in st.session_state:
+            
+                            #Create a OPC-UA Client for Station-1
+                            station1_client = OPCUAClient("station1")
+                            station1_client.connect()      
+                           
+                            station1_client.create_subscription()
+                            station1_client.subscribe_all_nodes()
+                            #station1_client.subscribe_node("state_no_act")
+                            #station1_client.subscribe_node("error_code")
 
+                             # Keep the client during the Streamlit session                
+                            st.session_state.station1_client = station1_client
+
+
+                            # station1_client.subscribe_node("start_request")
+                            # station1_client.subscribe_node("stop_request")
+                            # station1_client.subscribe_node("state_no_act")
+                            # station1_client.subscribe_node("state_description")                            
+                            # station1_client.subscribe_node("error_description")
+                            # station1_client.subscribe_node("pressure_act_level")
+                            # station1_client.subscribe_node("serial_no")
+                           
+                            
+                        st.session_state.page = "station1"
+                        st.rerun()
+
+        except (ConnectionError, TimeoutError):
+             st.error("Connection is not successful. Check the connection of Station-1")
+
+
+        
+
+    # Station 2
     with col2:
-        st.subheader("Product Line 2")
-        st.write("Future Production Line")
-
-        #st.write("ST1 —")
-        #st.write("ST2 —")
-        #st.write("ST3 —")
-
-        selected_station = st.radio(
-            "Select Station",
-            [
-                "ST1 — ...",
-                "ST2 — ...",
-                "ST3 — ..."
-            ],
-            key="product_line2_station"
+        st.image(
+            "assets/images/station2.png",
+            use_container_width=True
         )
 
+        st.subheader("Station 02")
+        st.write("Recipe-Based Filling")
+        st.caption("CODESYS / WAGO")
+
         st.button(
-            "Open Product Line 2 →",
+            "Open Station 02 →",
             use_container_width=True,
             disabled=True
         )
 
+    # Station 3
     with col3:
-        st.subheader("Product Line 3")
-        st.write("Future Production Line")
-
-        #st.write("ST1 —")
-        #st.write("ST2 —")
-        #st.write("ST3 —")
-
-        selected_station = st.radio(
-            "Select Station",
-            [
-                "ST1 — ...",
-                "ST2 — ...",
-                "ST3 — ..."
-            ],
-            key="product_line3_station"
+        st.image(
+            "assets/images/station3.png",
+            use_container_width=True
         )
 
+        st.subheader("Station 03")
+        st.write("Quality Control & Packaging")
+        st.caption("Beckhoff")
+
         st.button(
-            "Open Product Line 3 →",
+            "Open Station 03 →",
             use_container_width=True,
             disabled=True
         )
-
-    # -------------------------
-    # Quick Stats
-    # -------------------------
-    st.subheader("Quick Stats")
-
-    stat1, stat2, stat3, stat4 = st.columns(4)
-
-    stat1.metric("Total Orders", 0)
-    stat2.metric("Running", 0)
-    stat3.metric("Idle", 3)
-    stat4.metric("Fault", 0)
-
-    # -------------------------
-    # Recent Orders
-    # -------------------------
-    st.subheader("Recent Orders")
-
-    st.info("No production orders yet.")
